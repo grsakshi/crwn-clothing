@@ -14,6 +14,6 @@ const CollectionItem = ({id, name, imageUrl, price}) => (
             <span className='price'>${price}</span>
         </div>
     </div>
-);
+); 
 
 export default CollectionItem;
