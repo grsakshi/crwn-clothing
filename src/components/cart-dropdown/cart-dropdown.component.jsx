@@ -2,15 +2,15 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 
 import CartItem from "../cart-item/cart-item.component";
-import {createStructuredSelector} from 'reselect';
 
 import {toggleCartHidden} from '../../redux/cart/cart.actions';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 
-import {selectCartItems} from '../../redux/cart/cart.selectors';
 import {CartDropdownStyle, CartItemsStyle, EmptyMessage, Button} from './cart-dropdown.styles';
 
-const CartDropdown = ({cartItems, history, dispatch}) => (
+const cartItems = useSelector(state => state.cart.cartItems);
+
+const CartDropdown = ({ history, dispatch}) => (
     <CartDropdownStyle>
         <CartItemsStyle>
             {cartItems.length ? 
@@ -29,8 +29,5 @@ const CartDropdown = ({cartItems, history, dispatch}) => (
     </CartDropdownStyle>
 );
 
-const mapStateToProps = createStructuredSelector({
-    cartItems: selectCartItems
-});
 
-export default withRouter(connect(mapStateToProps)(CartDropdown));
+export default withRouter(CartDropdown);

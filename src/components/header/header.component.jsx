@@ -1,22 +1,20 @@
 import React from 'react';
 
 import { ReactComponent as Logo } from "../../assets/crown.svg";
-import {createStructuredSelector} from 'reselect';
 
 import { auth } from '../../firebase/firebase.utils';
-
-import {selectCartHidden} from '../../redux/cart/cart.selectors';
-import {selectCurrentUser} from '../../redux/user/user.selectors';
 
 import CartIcon from '../cart-icon/cart-icon.component';
 import CartDropdown from "../cart-dropdown/cart-dropdown.component";
 
-import { connect } from 'react-redux'; // higher order component which takes component and returns level up component
+import { useSelector } from 'react-redux'; // higher order component which takes component and returns level up component
 
 import {LogoContainer, HeaderContainer, OptionLink, OptionsContainer} from './header.styles';
 
+const currentUser = useSelector(state => state.user.currentUser);
+const hidden = useSelector(state => state.cart.hidden);
 
-const Header = ({currentUser, hidden}) => (
+const Header = () => (
     <HeaderContainer>
         <LogoContainer to='/'>
             <Logo className='logo' />
@@ -42,9 +40,5 @@ const Header = ({currentUser, hidden}) => (
     </HeaderContainer>
 );
 
-const mapStateToProps = createStructuredSelector({
-    currentUser: selectCurrentUser,
-    hidden: selectCartHidden
-});
 
-export default connect(mapStateToProps)(Header);
+export default Header;

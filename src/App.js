@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { useSelector, useDispatch } from 'react-redux';
 
 import './App.css';
 
@@ -13,35 +12,33 @@ import Header from './components/header/header.component.jsx';
 
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { setCurrentUser } from './redux/user/user.actions';
-import { selectCurrentUser } from './redux/user/user.selectors';
 
-class App extends React.Component {
-  unsubscribeFromAuth = null;
+const currentUser = useSelector((state) => state.user.currentUser);
 
-  componentDidMount(){
-    const { setCurrentUser } = this.props;
+const App = () => {
+  let unsubscribeFromAuth = null;
+  const dispatch = useDispatch();
 
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+  useEffect(() => {
+      unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if(userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot(snapShot => {
-          setCurrentUser({
+          dispatch(setCurrentUser(({
               id: snapShot.id,
               ...snapShot.data()
-          });
+          })));
         });
       }
-      setCurrentUser(userAuth);
+      dispatch(setCurrentUser(userAuth));
     });
-  }
+    return () => {
+        unsubscribeFromAuth();
+      }
+    }, []);
 
-  componentWillUnmount(){
-    this.unsubscribeFromAuth();
-  }
-
-  render(){
-    return (
+  return (
     <div className="App">
       <Header/>
         <Switch>
@@ -49,22 +46,15 @@ class App extends React.Component {
           <Route path='/shop' component={ShopPage}/>
           <Route exact path='/checkout' component={CheckoutPage}/>
           <Route exact path='/signin' render={() => 
-            this.props.currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage />) 
+            currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage />) 
           } /> 
         </Switch>
     </div>
   );
-  }
 }
-// using render in signin helps us check what to render if signed in and what to render if it's not
 
 // we need currentuser from state to see if we need to redirect the user or not if they signed in 
-const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
-});
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+export default App;
