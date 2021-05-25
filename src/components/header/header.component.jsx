@@ -7,7 +7,7 @@ import { auth } from '../../firebase/firebase.utils';
 import CartIcon from '../cart-icon/cart-icon.component';
 import CartDropdown from "../cart-dropdown/cart-dropdown.component";
 
-import { useSelector } from 'react-redux'; // higher order component which takes component and returns level up component
+import { useSelector } from 'react-redux';
 
 import {LogoContainer, HeaderContainer, OptionLink, OptionsContainer} from './header.styles';
 
